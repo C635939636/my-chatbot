@@ -1,101 +1,118 @@
-import Image from "next/image";
+"use client";
+import { useState } from "react";
+
+interface Message {
+  content: string;
+  isBot: boolean;
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [messages, setMessages] = useState<Message[]>([
+    { content: "你好！我是AI助手，有什么可以帮你的吗？", isBot: true }
+  ]);
+  const [input, setInput] = useState("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    setMessages(prev => [...prev, { content: input, isBot: false }]);
+    
+    setTimeout(() => {
+      const userMessage = input.trim().toLowerCase();
+      let response = "";
+
+      if (userMessage.includes("你好") || userMessage.includes("hi") || userMessage.includes("hello")) {
+        const greetings = [
+          "你好啊！很高兴见到你！",
+          "你好！今天有什么我可以帮你的吗？",
+          "嗨！希望你今天心情愉快！"
+        ];
+        response = greetings[Math.floor(Math.random() * greetings.length)];
+      }
+      else if (userMessage.includes("天气")) {
+        const weatherResponses = [
+          "今天天气晴朗，温度适宜，是个出门散步的好日子！",
+          "根据最新天气预报，今天气温20-25度，多云转晴，很舒适哦！",
+          "今天阳光明媚，空气质量不错，适合户外活动！"
+        ];
+        response = weatherResponses[Math.floor(Math.random() * weatherResponses.length)];
+      }
+      else if (userMessage.includes("午餐") || userMessage.includes("吃什么")) {
+        const lunchResponses = [
+          "我给您几个午餐建议：\n1. 清炒时蔬配米饭\n2. 意大利面配沙拉\n3. 照烧鸡肉饭\n4. 麻辣香锅\n选一个您喜欢的吧！",
+          "今天午餐我建议您可以尝试：\n1. 水煮鱼配米饭\n2. 三明治配玉米汤\n3. 日式咖喱饭\n都是不错的选择！",
+          "根据当季食材，推荐您午餐可以选择：\n1. 西红柿牛肉面\n2. 韩式拌饭\n3. 粤式烧腊饭\n营养美味都兼顾哦！"
+        ];
+        response = lunchResponses[Math.floor(Math.random() * lunchResponses.length)];
+      }
+      else {
+        const defaultResponses = [
+          "抱歉，我可能没有完全理解您的问题。您能具体说明一下吗？",
+          "这个问题很有趣，让我想想怎么回答...",
+          "您说的这个我很感兴趣，能详细解释一下吗？"
+        ];
+        response = defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+      }
+
+      setMessages(prev => [...prev, { 
+        content: response, 
+        isBot: true 
+      }]);
+    }, 1000);
+
+    setInput("");
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex justify-center items-center p-4">
+      <div className="w-full max-w-3xl h-[600px] bg-white dark:bg-gray-800 rounded-xl shadow-lg flex flex-col">
+        {/* 标题栏 */}
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+          <h1 className="text-xl font-semibold text-center text-black/50 dark:text-white/50">AI 助手</h1>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* 聊天消息区域 */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={`flex ${message.isBot ? "justify-start" : "justify-end"}`}
+            >
+              <div
+                className={`max-w-[80%] rounded-lg p-3 ${
+                  message.isBot
+                    ? "bg-gray-100 dark:bg-gray-700 text-black dark:text-white"
+                    : "bg-blue-500 text-white"
+                }`}
+              >
+                {message.content}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 输入区域 */}
+        <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-b-xl">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="输入消息..."
+              className="flex-1 p-2 border dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
+              text-black dark:text-white bg-white dark:bg-gray-700 
+              placeholder-gray-400 dark:placeholder-gray-500"
+            />
+            <button
+              type="submit"
+              className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              发送
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
